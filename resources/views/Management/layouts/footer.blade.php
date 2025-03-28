@@ -335,8 +335,8 @@
             $('#discount_amt').val(Math.round(totalAmount)); // Set the value of discount_amt
         });
     });
-    
-    
+
+
     $(document).ready(function() {
         $("#sum_of_total_cost").click(function() {
             //manual session calculator
@@ -400,10 +400,10 @@
             $("#new_given_discount").val(sum_of_total_cost_txt - new_package_price_txt);
         })
     })
-    
-    
-    
-    
+
+
+
+
     // ONLINE E - SIGNATURE
 
 
@@ -425,7 +425,14 @@
             alert('Please provide a signature first.');
         }
     });
+
 </script>
+
+
+
+
 </body>
 
 </html>
+
+

@@ -28,8 +28,10 @@
 
 
     {{-- CALENDER  --}}
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css" rel="stylesheet">
 
+    <!-- Include FullCalendar JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">

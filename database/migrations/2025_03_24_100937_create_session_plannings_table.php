@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('patient_id');
             $table->foreign('patient_id')->references('id')->on('patient_registrations')->onDelete('cascade');
+            $table->string('time');
             $table->date('date');
             $table->string('day');
             $table->string('month');
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->enum('frequency', ['once', 'twice'])->default('once');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

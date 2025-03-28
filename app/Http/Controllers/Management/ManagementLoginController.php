@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Management;
 
+use App\Models\User;
 use App\Models\doctor;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Models\notification;
 use App\Models\patient_list;
+use Illuminate\Http\Request;
+use App\Models\SessionPlanning;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Models\notification;
-use App\Models\User;
 
 
 class ManagementLoginController extends Controller
@@ -38,7 +39,7 @@ class ManagementLoginController extends Controller
 
             if ($admin && $admin->role == 1) {
                 return redirect()->route('manage.dashboard');
-            }elseif($admin && $admin->role == 4){
+            } elseif ($admin && $admin->role == 4) {
                 return redirect()->route('fms.dashboard');
             } else {
                 Auth::guard('admin')->logout();
@@ -54,10 +55,11 @@ class ManagementLoginController extends Controller
     {
         $doctorList = count(doctor::all());
         $PatientList = count(patient_list::all());
-        $notifications = notification::select('data','notifiable_id')->get();
+        $notifications = notification::select('data', 'notifiable_id')->get();
         $latestNotifications = notification::orderBy('created_at', 'desc')->take(5)->get();
+        $sessions = SessionPlanning::with('patient:id,patient_name')->get();
         $user = User::all();
-        return view('Management.dashboard', compact('doctorList', 'PatientList','notifications','user','latestNotifications'));
+        return view('Management.dashboard', compact('doctorList', 'PatientList', 'notifications', 'user', 'latestNotifications', 'sessions'));
     }
 
     public function logout()
@@ -65,5 +67,4 @@ class ManagementLoginController extends Controller
         Auth::guard('web')->logout();
         return redirect()->route('manage.login');
     }
-
 }

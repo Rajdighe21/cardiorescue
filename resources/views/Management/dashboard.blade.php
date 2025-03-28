@@ -139,19 +139,33 @@
             <div class="col-lg-7 mb-lg-0 mb-4">
                 <div class="card z-index-2 h-100">
                     <div class="card-header pb-0 pt-3 bg-transparent">
-                      <h6 class="text-capitalize">Sales overview</h6>
-                      <p class="text-sm mb-0">
-                        <i class="fa fa-arrow-up text-success"></i>
-                        <span class="font-weight-bold">4% more</span> in 2021
-                      </p>
+                        <h6 class="text-capitalize">Sales overview</h6>
+                        <p class="text-sm mb-0">
+                            <i class="fa fa-arrow-up text-success"></i>
+                            <span class="font-weight-bold">4% more</span> in 2021
+                        </p>
                     </div>
                     <div class="card-body p-3">
-                      <div class="chart">
-                        <canvas id="chart-line" class="chart-canvas" height="300" width="571" style="display: block; box-sizing: border-box; height: 300px; width: 571.1px;"></canvas>
-                      </div>
+                        <div class="chart">
+                            <canvas id="chart-line" class="chart-canvas" height="300" width="571"
+                                style="display: block; box-sizing: border-box; height: 300px; width: 571.1px;"></canvas>
+                        </div>
                     </div>
-                  </div>
+                </div>
             </div>
+            <div class="col-lg-5">
+                <div class="card">
+                    <div class="card-header pb-0 p-3">
+                        <h6 class="mb-0">Scheduled Sessions</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
             <div class="col-lg-5">
                 <div class="card">
                     <div class="card-header pb-0 p-3">
@@ -197,9 +211,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="row mt-4">
             <div class="col-lg-7 mb-lg-0 mb-4">
                 <div class="card ">
                     <div class="card-header pb-0 p-3">
@@ -271,24 +282,29 @@
             <!--        </div>-->
             <!--        <div class="card-body p-3">-->
             <!--            <ul class="list-group">-->
-            <!--                @foreach ($latestNotifications as $notification)-->
+            <!--                @foreach ($latestNotifications as $notification)
+    -->
             <!--                    @php-->
-            <!--                        // Decode the JSON data-->
-            <!--                        $data = json_decode($notification->data, true);-->
-            <!--                        $appointmentDate = \Carbon\Carbon::parse($data['app_date']);-->
-            <!--                    @endphp-->
+                            <!--                        // Decode the JSON data-->
+                            <!--                        $data = json_decode($notification->data, true);-->
+                            <!--                        $appointmentDate = \Carbon\Carbon::parse($data['app_date']);-->
+                        <!--                    @endphp ?>-->
             <!--                    <li-->
             <!--                        class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">-->
             <!--                        <div class="d-flex align-items-center">-->
             <!--                            <div class="icon icon-shape icon-sm me-3 bg-gradient-dark shadow text-center">-->
             <!--                                <i class="text-white  opacity-10">-->
-            <!--                                    @if ($data['session_no'] == 0)-->
+            <!--                                    @if ($data['session_no'] == 0)
+    -->
             <!--                                        A-->
-            <!--                                    @elseif ($data['session_no'] == -1)-->
+            <!--
+@elseif ($data['session_no'] == -1)
+    -->
             <!--                                        Cons-->
-            <!--                                    @else-->
+        <!--                                    @else-->
             <!--                                        {{ $data['session_no'] }}-->
-            <!--                                    @endif-->
+            <!--
+    @endif-->
             <!--                                </i>-->
             <!--                            </div>-->
             <!--                            <div class="d-flex flex-column">-->
@@ -297,19 +313,22 @@
             <!--                            </div>-->
             <!--                        </div>-->
             <!--                        <div class="d-flex text-sm my-auto">-->
-            <!--                            Dr. @foreach ($user as $use)-->
+            <!--                            Dr. @foreach ($user as $use)
+    -->
             <!--                                {{ $use->id == $notification->notifiable_id ? $use->name : '' }}-->
-            <!--                            @endforeach-->
+            <!--
+    @endforeach-->
 
             <!--                        </div>-->
             <!--                    </li>-->
-            <!--                @endforeach-->
+            <!--
+    @endforeach-->
 
             <!--            </ul>-->
             <!--        </div>-->
             <!--    </div>-->
             <!--</div>-->
-        </div> 
+        </div>
 
 
         <footer class="footer pt-4">
@@ -333,4 +352,55 @@
         </footer>
     </div>
     </main>
+@endsection
+
+@section('scriptsCustom')
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+    <!-- jQuery and Bootstrap (for modal) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        var sessionEvents = @json($sessions);
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var calendarEl = document.getElementById('calendar');
+            if (!calendarEl) {
+                console.error("Calendar element not found!");
+                return;
+            }
+
+            var today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+            var todayEvents = sessionEvents.filter(session => session.date === today); // Filter today's sessions
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridDay', // Show only today's view
+                selectable: true,
+                headerToolbar: {
+                    left: 'prev,next',
+                    right: 'today'
+                },
+                events: todayEvents.map(session => ({
+                    title: (session.patient ? session.patient.patient_name : 'Unknown') +
+                        ' - ' + session.description,
+                    start: session.date + (session.time ? 'T' + session.time : '')
+                })),
+                dateClick: function(info) {
+                    let selectedDate = new Date(info.dateStr);
+                    $('#appointmentDate').val(info.dateStr);
+                    $('#appointmentModal').modal('show');
+                },
+            });
+
+            calendar.render();
+            // Handle Cancel Button Click
+            $('#cancelAppointment').click(function() {
+                $('#appointmentModal').modal('hide'); // Close the modal
+                $('#appointmentForm')[0].reset(); // Clear form fields
+            });
+        });
+    </script>
 @endsection

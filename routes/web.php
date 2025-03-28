@@ -190,7 +190,10 @@ Route::group(['prefix' => 'management'], function () {
 
         // SESSION PLANING
         Route::get('/planing',[SessionPlanningController::class,'index'])->name('index.planing');
-        Route::get('/assign/planing',[SessionPlanningController::class,'assign'])->name('assign.planing');
+        Route::get('/assign/planing/{id}',[SessionPlanningController::class,'assign'])->name('assign.planing');
+        Route::post('/assign/planing',[SessionPlanningController::class,'storePlanning'])->name('store.planing');
+        Route::delete('/delete/planing/{id}',[SessionPlanningController::class,'deletePlanning'])->name('delete.planing');
+        Route::get('/filter/planning/session', [SessionPlanningController::class, 'filterPlanning'])->name('filter.planning');
 
     });
 });
